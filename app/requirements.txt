@@ -1,0 +1,3 @@
+google-api-python-client==2.118.0
+pyTelegramBotAPI==4.18.0
+schedule==1.2.1
