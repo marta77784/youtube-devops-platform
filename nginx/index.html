@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funny Damon Show — YouTube Stats</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f0f0f;
+            color: #fff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #ff0000, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p {
+            color: #aaa;
+            margin-top: 8px;
+            font-size: 1rem;
+        }
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 32px;
+            min-width: 260px;
+            flex: 1;
+            border: 1px solid #333;
+        }
+        .card h2 {
+            font-size: 1.2rem;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .stat:last-child { border-bottom: none; }
+        .stat-label { color: #aaa; font-size: 0.9rem; }
+        .stat-value { font-size: 1.3rem; font-weight: bold; color: #fff; }
+        .updated {
+            text-align: center;
+            color: #555;
+            margin-top: 30px;
+            font-size: 0.85rem;
+        }
+        .total {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 16px;
+            max-width: 900px;
+            margin: 30px auto 0;
+            border: 1px solid #333;
+        }
+        .total h3 { color: #aaa; font-size: 0.9rem; margin-bottom: 8px; }
+        .total span { font-size: 2rem; font-weight: bold; color: #ff6b6b; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 YouTube Analytics</h1>
+        <p>Funny Damon Show — Live Stats Dashboard</p>
+    </div>
+
+    <div class="cards" id="cards">
+        <div class="card">
+            <p style="color:#555; text-align:center;">Загрузка данных...</p>
+        </div>
+    </div>
+
+    <div class="total" id="total" style="display:none">
+        <h3>Всего подписчиков</h3>
+        <span id="total-subs">—</span>
+    </div>
+
+    <p class="updated" id="updated"></p>
+
+    <script>
+        fetch('/data/stats.json')
+            .then(r => r.json())
+            .then(data => {
+                const cards = document.getElementById('cards');
+                cards.innerHTML = '';
+                let total = 0;
+
+                data.channels.forEach(ch => {
+                    total += ch.subscribers;
+                    cards.innerHTML += `
+                        <div class="card">
+                            <h2>${ch.title}</h2>
+                            <div class="stat">
+                                <span class="stat-label">👥 Подписчики</span>
+                                <span class="stat-value">${ch.subscribers.toLocaleString()}</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">👁 Просмотры</span>
+                                <span class="stat-value">${ch.views.toLocaleString()}</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">🎬 Видео</span>
+                                <span class="stat-value">${ch.videos}</span>
+                            </div>
+                        </div>`;
+                });
+
+                document.getElementById('total-subs').textContent = total.toLocaleString();
+                document.getElementById('total').style.display = 'block';
+                document.getElementById('updated').textContent = 'Обновлено: ' + data.date;
+            })
+            .catch(() => {
+                document.getElementById('cards').innerHTML =
+                    '<div class="card"><p style="color:#555;text-align:center;">Данные обновятся в 9:00</p></div>';
+            });
+    </script>
+</body>
+</html>
