@@ -5,12 +5,12 @@ import time
 from datetime import datetime
 from googleapiclient.discovery import build
 import telebot
-import google.generativeai as genai
+from groq import Groq
 
 YOUTUBE_API_KEY = os.environ["YOUTUBE_API_KEY"]
 TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
 TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
-GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
+GROQ_API_KEY = os.environ["GROQ_API_KEY"]
 
 CHANNELS = [
     {"handle": "@funnydamon", "name": "Funny Damon Show"},
@@ -19,8 +19,7 @@ CHANNELS = [
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
-genai.configure(api_key=GEMINI_API_KEY)
-gemini = genai.GenerativeModel("gemini-2.0-flash")
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 
 def get_stats(handle):
@@ -54,8 +53,11 @@ def get_ai_analysis(all_stats):
 Отметь что хорошо, что можно улучшить, общий тренд."""
 
     try:
-        response = gemini.generate_content(prompt)
-        return response.text
+        response = groq_client.chat.completions.create(
+            model="llama3-8b-8192",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response.choices[0].message.content
     except Exception as e:
         return f"AI анализ недоступен: {e}"
 

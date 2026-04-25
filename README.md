@@ -22,7 +22,7 @@ Built as a full DevOps project using industry-standard tools.
 | **Python** | Bot logic, YouTube API integration |
 | **Telegram Bot API** | Daily notifications |
 | **YouTube Data API v3** | Fetch channel statistics |
-| **Google Gemini AI** | Analyze channel performance and trends |
+| **Groq AI (LLaMA 3)** | Analyze channel performance and trends |
 
 ## Architecture
 
@@ -68,7 +68,7 @@ Create `.env` file:
 YOUTUBE_API_KEY=your_key
 TELEGRAM_TOKEN=your_token
 TELEGRAM_CHAT_ID=your_chat_id
-GEMINI_API_KEY=your_gemini_key
+GROQ_API_KEY=your_groq_key
 ```
 
 ### 4. Deploy
