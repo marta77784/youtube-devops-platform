@@ -5,10 +5,12 @@ import time
 from datetime import datetime
 from googleapiclient.discovery import build
 import telebot
+import google.generativeai as genai
 
 YOUTUBE_API_KEY = os.environ["YOUTUBE_API_KEY"]
 TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
 TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
+GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 
 CHANNELS = [
     {"handle": "@funnydamon", "name": "Funny Damon Show"},
@@ -17,6 +19,8 @@ CHANNELS = [
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
+genai.configure(api_key=GEMINI_API_KEY)
+gemini = genai.GenerativeModel("gemini-1.5-flash")
 
 
 def get_stats(handle):
@@ -37,14 +41,36 @@ def get_stats(handle):
     }
 
 
+def get_ai_analysis(all_stats):
+    stats_text = ""
+    for s in all_stats:
+        stats_text += f"{s['title']}: {s['subscribers']:,} подписчиков, {s['views']:,} просмотров, {s['videos']} видео\n"
+
+    prompt = f"""Ты аналитик YouTube каналов. Вот сегодняшняя статистика:
+
+{stats_text}
+
+Дай короткий анализ в 2-3 предложениях на русском языке.
+Отметь что хорошо, что можно улучшить, общий тренд."""
+
+    try:
+        response = gemini.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        return f"AI анализ недоступен: {e}"
+
+
 def send_daily_report():
     date = datetime.now().strftime("%d.%m.%Y %H:%M")
     message = f"📊 *YouTube Stats — {date}*\n\n"
 
+    all_stats = []
     total_subs = 0
+
     for ch in CHANNELS:
         stats = get_stats(ch["handle"])
         if stats:
+            all_stats.append(stats)
             total_subs += stats["subscribers"]
             message += (
                 f"*{stats['title']}*\n"
@@ -53,7 +79,10 @@ def send_daily_report():
                 f"🎬 Видео: {stats['videos']}\n\n"
             )
 
-    message += f"*Всего подписчиков: {total_subs:,}*"
+    message += f"*Всего подписчиков: {total_subs:,}*\n\n"
+
+    ai_analysis = get_ai_analysis(all_stats)
+    message += f"🤖 *AI Анализ:*\n{ai_analysis}"
 
     bot.send_message(TELEGRAM_CHAT_ID, message, parse_mode="Markdown")
     print(f"[{date}] Report sent")
