@@ -82,9 +82,10 @@ def send_daily_report():
     message += f"*Всего подписчиков: {total_subs:,}*\n\n"
 
     ai_analysis = get_ai_analysis(all_stats)
-    message += f"🤖 *AI Анализ:*\n{ai_analysis}"
+    message += f"*Всего подписчиков: {total_subs:,}*"
 
     bot.send_message(TELEGRAM_CHAT_ID, message, parse_mode="Markdown")
+    bot.send_message(TELEGRAM_CHAT_ID, f"🤖 AI Анализ:\n{ai_analysis}")
     print(f"[{date}] Report sent")
 
 
