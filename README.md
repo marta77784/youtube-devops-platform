@@ -7,6 +7,7 @@ Built as a full DevOps project using industry-standard tools.
 
 - Fetches daily stats from YouTube channels (Funny Damon Show 1.7M+ subscribers, Damon Dylan 339K)
 - Sends automated Telegram report every morning at 9:00 AM
+- Uses Google Gemini AI to analyze channel performance and trends
 - Runs 24/7 on AWS EC2 in Docker containers
 
 ## Tech Stack
@@ -21,6 +22,7 @@ Built as a full DevOps project using industry-standard tools.
 | **Python** | Bot logic, YouTube API integration |
 | **Telegram Bot API** | Daily notifications |
 | **YouTube Data API v3** | Fetch channel statistics |
+| **Google Gemini AI** | Analyze channel performance and trends |
 
 ## Architecture
 
@@ -66,6 +68,7 @@ Create `.env` file:
 YOUTUBE_API_KEY=your_key
 TELEGRAM_TOKEN=your_token
 TELEGRAM_CHAT_ID=your_chat_id
+GEMINI_API_KEY=your_gemini_key
 ```
 
 ### 4. Deploy
