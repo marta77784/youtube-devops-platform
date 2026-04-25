@@ -20,7 +20,7 @@ CHANNELS = [
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
 genai.configure(api_key=GEMINI_API_KEY)
-gemini = genai.GenerativeModel("gemini-1.5-flash")
+gemini = genai.GenerativeModel("gemini-2.0-flash")
 
 
 def get_stats(handle):
